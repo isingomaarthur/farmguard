@@ -1,6 +1,6 @@
-# Farm Genie
+# Farm Guard
 
-A Next.js (App Router) recreation of the Farm Genie AI farming assistant UI —
+A Next.js (App Router) recreation of the Farm Guard AI farming assistant UI —
 sidebar navigation, a greeting screen with quick-action cards, and a chat
 interface with structured replies (weather forecast, market prices).
 

@@ -18,7 +18,7 @@ export default function Sidebar({ activeChatId, onSelectChat, onNewChat }) {
           <Sprout size={18} strokeWidth={2.5} />
         </div>
         <span className="font-display text-xl font-semibold tracking-tight">
-          Farm Genie
+          Farm Guard
         </span>
       </div>
 

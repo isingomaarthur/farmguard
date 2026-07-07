@@ -23,9 +23,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata = {
-  title: "Farm Genie — Your AI Farming Assistant",
+  title: "Farm Guard — Your AI Farming Assistant",
   description:
-    "Ask about crops, weather, pests, and market prices. Farm Genie brings field-tested answers to every grower.",
+    "Ask about crops, weather, pests, and market prices. Farm Guard brings field-tested answers to every grower.",
 };
 
 export default function RootLayout({ children }) {
