@@ -22,6 +22,14 @@ module.exports = {
         sky: "#4F86A0",
         ink: "#26301F",
         furrow: "#DCCFA6",
+        "fg-green": {
+          DEFAULT: "#2F6B41",
+          dark: "#234F30",
+        },
+        "fg-cream": "#F6F7F5",
+        "fg-critical": "#DC2626",
+        "fg-warning": "#F59E0B",
+        "fg-info": "#3B82F6",
       },
       fontFamily: {
         display: ["var(--font-fraunces)", "serif"],

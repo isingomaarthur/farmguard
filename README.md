@@ -19,17 +19,37 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```
 app/
-  layout.jsx       Root layout, fonts, metadata
-  page.jsx         Dashboard + chat screen
-  globals.css      Tailwind base + global styles
+  layout.jsx             Root layout, fonts, metadata
+  page.jsx               Farm Guard chat screen (greeting + quick actions)
+  globals.css            Tailwind base + global styles
+  (dashboard)/
+    layout.jsx           Shared shell (green top bar + Farm Guard sidebar)
+    dashboard/page.jsx   Real-Time Monitoring — sensor cards + trend charts
+    alerts/page.jsx      Alerts & Notifications — severity list
+    reports/page.jsx     Data Visualization & Reports — bar + pie charts
+    system-map/page.jsx  System Map — sensor node locations
+    profile/page.jsx     Profile — user & farm details, account settings
 components/
-  Sidebar.jsx          Left navigation: brand, new chat, recent chats
-  ChatInput.jsx        Message input with send button
-  ChatMessage.jsx      Single chat bubble (user or assistant)
-  QuickActionCard.jsx  Home screen quick-action tiles
-  WeatherWidget.jsx    Structured weather reply
-  PriceTable.jsx       Structured market-price reply
+  Sidebar.jsx            Chat screen nav: brand, new chat, recent chats
+  ChatInput.jsx          Message input with send button
+  ChatMessage.jsx        Single chat bubble (user or assistant)
+  QuickActionCard.jsx    Home screen quick-action tiles
+  WeatherWidget.jsx      Structured weather reply
+  PriceTable.jsx         Structured market-price reply
+  FarmGuardSidebar.jsx   Dashboard nav: Dashboard/Alerts/Reports/System Map/Profile
+  FarmGuardTopBar.jsx    Green header bar with GSM online status
+  StatusPill.jsx         NORMAL/WARNING/CRITICAL/INFO badge
 ```
+
+The chat assistant (`/`) and the GSM monitoring dashboard (`/dashboard`,
+`/alerts`, `/reports`, `/system-map`, `/profile`) are cross-linked: "Sensor
+monitoring" in the chat sidebar opens the dashboard, and "Ask Farm Guard" in
+the dashboard sidebar returns to the chat.
+
+`system-map` and `profile` were built to match the established visual system
+since their reference screenshots weren't available — adjust the mock data
+(`NODES` in `system-map/page.jsx`, the profile fields in `profile/page.jsx`)
+to fit your real content.
 
 ## Design tokens
 

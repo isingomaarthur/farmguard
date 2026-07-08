@@ -1,0 +1,105 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, Bell, BarChart2, Map, User, MessageSquare } from "lucide-react";
+
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "Dashboard", icon: Home },
+  { href: "/alerts", label: "Alerts", icon: Bell },
+  { href: "/reports", label: "Reports", icon: BarChart2 },
+  { href: "/system-map", label: "System Map", icon: Map },
+  { href: "/profile", label: "Profile", icon: User },
+];
+
+export default function FarmGuardSidebar({ open, onClose }) {
+  const pathname = usePathname();
+
+  return (
+    <>
+      {/* Mobile scrim */}
+      {open && (
+        <div
+          className="fixed inset-0 z-30 bg-black/30 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed z-40 flex h-screen w-72 shrink-0 flex-col border-r border-ink/10 bg-white transition-transform md:sticky md:top-0 md:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col items-center gap-2 px-6 pb-5 pt-8 text-center">
+          <div className="grid h-16 w-16 place-items-center rounded-lg border border-ink/10 bg-white shadow-sm">
+            <svg viewBox="0 0 24 24" className="h-9 w-9 text-fg-green" fill="none">
+              <path
+                d="M4 11.5 12 5l8 6.5"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M6 10.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8.5"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M10 20v-4.5a2 2 0 0 1 4 0V20"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <p className="font-display text-xl font-bold text-fg-green">Farm Guard Uganda</p>
+          <p className="text-sm text-ink/50">GSM Monitoring System</p>
+        </div>
+
+        <nav className="mt-2 border-t border-ink/10 px-4 py-4">
+          <ul className="space-y-1">
+            {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+              const active = pathname === href;
+              return (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    onClick={onClose}
+                    className={`flex items-center gap-3.5 rounded-lg px-3 py-3 text-base transition-colors ${
+                      active
+                        ? "bg-fg-green/10 font-semibold text-ink"
+                        : "text-ink/70 hover:bg-ink/5"
+                    }`}
+                  >
+                    <Icon
+                      size={20}
+                      className={active ? "text-fg-green" : "text-ink/50"}
+                      strokeWidth={2}
+                    />
+                    {label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="mt-auto border-t border-ink/10 px-4 py-4">
+          <Link
+            href="/"
+            onClick={onClose}
+            className="flex items-center gap-3.5 rounded-lg px-3 py-3 text-sm text-ink/60 transition-colors hover:bg-ink/5"
+          >
+            <MessageSquare size={18} className="text-ink/40" />
+            Ask Farm Guard
+          </Link>
+        </div>
+      </aside>
+    </>
+  );
+}
