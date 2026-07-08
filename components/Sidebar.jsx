@@ -13,11 +13,15 @@ export default function Sidebar({ activeChatId, onSelectChat, onNewChat }) {
   return (
     <aside className="hidden md:flex md:w-72 shrink-0 flex-col bg-forest text-cream h-screen sticky top-0">
       {/* Brand */}
-      <div className="flex items-center gap-2 px-6 pt-7 pb-5">
-        <div className="grid h-9 w-9 place-items-center rounded-full bg-gold text-forest-dark">
-          <Sprout size={18} strokeWidth={2.5} />
+      <div className="flex items-center gap-3 px-6 pt-7 pb-5">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 shadow-sm shadow-forest/10 ring-1 ring-white/80">
+          <img
+            src="/logo/original.png"
+            alt="Farm Guard logo"
+            className="h-10 w-10 object-contain"
+          />
         </div>
-        <span className="font-display text-xl font-semibold tracking-tight">
+        <span className="font-display text-xl font-semibold tracking-tight text-cream">
           Farm Guard
         </span>
       </div>

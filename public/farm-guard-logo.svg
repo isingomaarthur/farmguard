@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title">
+  <title>Farm Guard logo</title>
+  <defs>
+    <linearGradient id="g" x1="60" y1="20" x2="60" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6fa447" />
+      <stop offset="100%" stop-color="#2f5026" />
+    </linearGradient>
+    <linearGradient id="g2" x1="60" y1="32" x2="60" y2="106" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#93c25f" />
+      <stop offset="100%" stop-color="#4d7734" />
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="30" fill="#ffffff" />
+  <path d="M22 62c12-15 33-27 51-28 18-1 40 8 45 28v22c0 8-7 15-15 15H37c-8 0-15-7-15-15V62Z" fill="#eaf0e3" />
+  <path d="M24 62c10-17 32-28 52-28 20 0 36 10 44 28v22c0 9-7 16-16 16H40c-9 0-16-7-16-16V62Z" fill="url(#g)" opacity="0.18" />
+  <path d="M26 62c10-15 29-24 46-24 17 0 36 8 44 24v20c0 8-6 14-14 14H40c-8 0-14-6-14-14V62Z" fill="none" stroke="#274328" stroke-width="6" stroke-linejoin="round" />
+  <path d="M60 34c-12 8-16 24-12 38 4 14 18 27 22 32 4-5 18-18 22-32 4-14 0-30-12-38-7-4-11-4-20 0Z" fill="url(#g2)" stroke="#224025" stroke-width="4" />
+  <path d="M44 56c-8 8-12 18-12 28" fill="none" stroke="#295428" stroke-width="5" stroke-linecap="round" />
+  <path d="M76 56c8 8 12 18 12 28" fill="none" stroke="#295428" stroke-width="5" stroke-linecap="round" />
+  <path d="M30 78c15-12 38-14 58-6" fill="none" stroke="#406430" stroke-width="5" stroke-linecap="round" />
+</svg>
