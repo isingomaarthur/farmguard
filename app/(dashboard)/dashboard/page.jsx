@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Droplets, Activity, Beaker, Wifi } from "lucide-react";
 import {
   LineChart,
@@ -13,63 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import StatusPill from "@/components/StatusPill";
-
-const humidityData = [
-  { time: "00:00", value: 60 },
-  { time: "04:00", value: 68 },
-  { time: "08:00", value: 63 },
-  { time: "12:00", value: 44 },
-  { time: "16:00", value: 50 },
-  { time: "20:00", value: 62 },
-];
-
-const moistureData = [
-  { time: "00:00", value: 42 },
-  { time: "04:00", value: 45 },
-  { time: "08:00", value: 40 },
-  { time: "12:00", value: 38 },
-  { time: "16:00", value: 41 },
-  { time: "20:00", value: 44 },
-];
-
-const phData = [
-  { time: "00:00", value: 6.55 },
-  { time: "04:00", value: 6.6 },
-  { time: "08:00", value: 6.4 },
-  { time: "12:00", value: 6.45 },
-  { time: "16:00", value: 6.55 },
-  { time: "20:00", value: 6.7 },
-];
-
-const STAT_CARDS = [
-  {
-    key: "humidity",
-    label: "Humidity",
-    value: "62",
-    unit: "%",
-    status: "NORMAL",
-    icon: Droplets,
-    color: "#2F6B41",
-  },
-  {
-    key: "moisture",
-    label: "Soil Moisture",
-    value: "44",
-    unit: "%",
-    status: "NORMAL",
-    icon: Activity,
-    color: "#2F6B41",
-  },
-  {
-    key: "ph",
-    label: "Soil pH",
-    value: "6.7",
-    unit: "pH",
-    status: "NORMAL",
-    icon: Beaker,
-    color: "#2F6B41",
-  },
-];
+import { authAPI, dashboardAPI } from "@/lib/api";
 
 function ChartCard({ title, children }) {
   return (
@@ -85,12 +30,87 @@ function ChartCard({ title, children }) {
 }
 
 export default function DashboardPage() {
+  const [profile, setProfile] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [readings, setReadings] = useState({
+    humidity: { value: "62", unit: "%" },
+    moisture: { value: "44", unit: "%" },
+    ph: { value: "6.7", unit: "pH" },
+  });
+
+  const [trends, setTrends] = useState([
+    { day: "Mon", humidity: 58, moisture: 42, ph: 6.4 },
+    { day: "Tue", humidity: 62, moisture: 45, ph: 6.5 },
+    { day: "Wed", humidity: 55, moisture: 40, ph: 6.6 },
+    { day: "Thu", humidity: 60, moisture: 43, ph: 6.7 },
+    { day: "Fri", humidity: 57, moisture: 46, ph: 6.6 },
+    { day: "Sat", humidity: 64, moisture: 44, ph: 6.8 },
+    { day: "Sun", humidity: 53, moisture: 41, ph: 6.5 },
+  ]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profileResponse, dashboardResponse] = await Promise.all([
+          authAPI.getCurrentUser(),
+          dashboardAPI.getDashboard(),
+        ]);
+
+        setProfile(profileResponse.user);
+        setDashboardData(dashboardResponse.dashboard);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const STAT_CARDS = [
+    {
+      key: "users",
+      label: "Total users",
+      value: dashboardData?.stats?.totalUsers ?? "—",
+      unit: "",
+      status: "ACTIVE",
+      icon: Droplets,
+      color: "#2F6B41",
+    },
+    {
+      key: "active",
+      label: "Active users",
+      value: dashboardData?.stats?.activeUsers ?? "—",
+      unit: "",
+      status: "ONLINE",
+      icon: Activity,
+      color: "#2F6B41",
+    },
+    {
+      key: "recent",
+      label: "Recent signups",
+      value: dashboardData?.stats?.recentUsers ?? "—",
+      unit: "",
+      status: "NEW",
+      icon: Beaker,
+      color: "#2F6B41",
+    },
+  ];
+
   return (
     <div className="mx-auto max-w-6xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">
-          Real-Time Monitoring
-        </h1>
+        <div>
+          <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">
+            Welcome back, {profile?.name || "Farmer"}
+          </h1>
+          <p className="mt-1 text-sm text-ink/60">
+            {profile?.farmName ? `Monitoring ${profile.farmName}` : "Secure dashboard access"}
+          </p>
+        </div>
         <span className="flex items-center gap-1.5 text-sm font-medium text-green-700">
           <Wifi size={16} />
           Online (GSM)
@@ -120,14 +140,14 @@ export default function DashboardPage() {
       {/* Trend charts */}
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <ChartCard title="Humidity Trends">
-          <LineChart data={humidityData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+          <LineChart data={trends} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
-            <XAxis dataKey="time" tick={{ fontSize: 11, fill: "#7a7a70" }} />
+            <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#7a7a70" }} />
             <YAxis tick={{ fontSize: 11, fill: "#7a7a70" }} />
             <Tooltip />
             <Line
               type="monotone"
-              dataKey="value"
+              dataKey="humidity"
               stroke="#3B82F6"
               strokeWidth={2}
               dot={{ r: 3 }}
@@ -136,14 +156,14 @@ export default function DashboardPage() {
         </ChartCard>
 
         <ChartCard title="Soil Moisture Trends">
-          <AreaChart data={moistureData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+          <AreaChart data={trends} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
-            <XAxis dataKey="time" tick={{ fontSize: 11, fill: "#7a7a70" }} />
+            <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#7a7a70" }} />
             <YAxis tick={{ fontSize: 11, fill: "#7a7a70" }} />
             <Tooltip />
             <Area
               type="monotone"
-              dataKey="value"
+              dataKey="moisture"
               stroke="#2F6B41"
               fill="#2F6B41"
               fillOpacity={0.35}
@@ -152,14 +172,14 @@ export default function DashboardPage() {
         </ChartCard>
 
         <ChartCard title="Soil pH Trends">
-          <LineChart data={phData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+          <LineChart data={trends} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
-            <XAxis dataKey="time" tick={{ fontSize: 11, fill: "#7a7a70" }} />
+            <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#7a7a70" }} />
             <YAxis domain={[5, 8]} tick={{ fontSize: 11, fill: "#7a7a70" }} />
             <Tooltip />
             <Line
               type="monotone"
-              dataKey="value"
+              dataKey="ph"
               stroke="#9333EA"
               strokeWidth={2}
               dot={{ r: 3 }}

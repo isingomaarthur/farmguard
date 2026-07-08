@@ -1,15 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { MapPin, Droplets, Activity, Beaker } from "lucide-react";
 import StatusPill from "@/components/StatusPill";
-
-const NODES = [
-  { id: "N1", zone: "North Field", x: 22, y: 28, status: "NORMAL", type: "Soil Moisture" },
-  { id: "N2", zone: "East Field", x: 68, y: 22, status: "WARNING", type: "Soil pH" },
-  { id: "N3", zone: "South Field", x: 40, y: 62, status: "CRITICAL", type: "Soil Moisture" },
-  { id: "N4", zone: "West Field", x: 78, y: 70, status: "NORMAL", type: "Humidity" },
-  { id: "N5", zone: "Greenhouse", x: 15, y: 75, status: "NORMAL", type: "Humidity" },
-];
+import { nodeAPI } from "@/lib/api";
 
 const STATUS_DOT = {
   NORMAL: "bg-green-600",
@@ -24,6 +18,36 @@ const TYPE_ICON = {
 };
 
 export default function SystemMapPage() {
+  const [nodes, setNodes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNodes = async () => {
+      try {
+        const data = await nodeAPI.getAllNodes();
+        if (Array.isArray(data)) {
+          setNodes(data);
+        }
+      } catch (error) {
+        console.error("Error fetching nodes:", error);
+        // Set default nodes on error
+        setNodes([
+          { id: "N1", zone: "North Field", x: 22, y: 28, status: "NORMAL", type: "Soil Moisture" },
+          { id: "N2", zone: "East Field", x: 68, y: 22, status: "WARNING", type: "Soil pH" },
+          { id: "N3", zone: "South Field", x: 40, y: 62, status: "CRITICAL", type: "Soil Moisture" },
+          { id: "N4", zone: "West Field", x: 78, y: 70, status: "NORMAL", type: "Humidity" },
+          { id: "N5", zone: "Greenhouse", x: 15, y: 75, status: "NORMAL", type: "Humidity" },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNodes();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchNodes, 30000);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="mx-auto max-w-6xl">
       <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">System Map</h1>
@@ -35,7 +59,7 @@ export default function SystemMapPage() {
         {/* Map */}
         <div className="relative overflow-hidden rounded-xl2 border border-ink/10 bg-white p-2 shadow-sm">
           <div className="relative h-[420px] w-full overflow-hidden rounded-lg bg-[linear-gradient(0deg,transparent_24%,rgba(47,107,65,0.08)_25%,rgba(47,107,65,0.08)_26%,transparent_27%,transparent_74%,rgba(47,107,65,0.08)_75%,rgba(47,107,65,0.08)_76%,transparent_77%,transparent),linear-gradient(90deg,transparent_24%,rgba(47,107,65,0.08)_25%,rgba(47,107,65,0.08)_26%,transparent_27%,transparent_74%,rgba(47,107,65,0.08)_75%,rgba(47,107,65,0.08)_76%,transparent_77%,transparent)] bg-[length:25%_25%] bg-fg-cream">
-            {NODES.map((node) => {
+            {nodes.map((node) => {
               const Icon = TYPE_ICON[node.type];
               return (
                 <div
@@ -89,7 +113,7 @@ export default function SystemMapPage() {
             Sensor Nodes
           </p>
           <ul className="divide-y divide-ink/10">
-            {NODES.map((node) => {
+            {nodes.map((node) => {
               const Icon = TYPE_ICON[node.type];
               return (
                 <li key={node.id} className="flex items-center gap-3 px-5 py-4">

@@ -1,147 +1,164 @@
 "use client";
 
-import { useState } from "react";
-import { CloudSun, LineChart, Bug, Landmark } from "lucide-react";
-import Sidebar from "@/components/Sidebar";
-import ChatInput from "@/components/ChatInput";
-import ChatMessage from "@/components/ChatMessage";
-import QuickActionCard from "@/components/QuickActionCard";
-
-const QUICK_ACTIONS = [
-  {
-    key: "weather",
-    icon: CloudSun,
-    title: "Weather forecast",
-    description: "4-day outlook for your field",
-    accent: "#4F86A0",
-    prompt: "What's the weather forecast for my farm this week?",
-  },
-  {
-    key: "prices",
-    icon: LineChart,
-    title: "Crop prices",
-    description: "Today's rates at nearby markets",
-    accent: "#D9A441",
-    prompt: "What are today's market prices for maize and beans?",
-  },
-  {
-    key: "pests",
-    icon: Bug,
-    title: "Pest control",
-    description: "Identify and treat crop damage",
-    accent: "#B5651D",
-    prompt: "My cotton leaves have small holes — what pest is this?",
-  },
-  {
-    key: "schemes",
-    icon: Landmark,
-    title: "Government schemes",
-    description: "Subsidies and support you qualify for",
-    accent: "#1F3D2B",
-    prompt: "What government schemes can help me buy a new tractor?",
-  },
-];
-
-function greeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
-}
+import Link from "next/link";
+import { Sprout, AlertCircle, BarChart3, MapPin, LogIn, UserPlus } from "lucide-react";
 
 export default function Home() {
-  const [messages, setMessages] = useState([]);
-  const [activeChatId, setActiveChatId] = useState(null);
-
-  function respondTo(text) {
-    const lower = text.toLowerCase();
-    let widget;
-    let reply =
-      "Thanks — here's what I found for your farm based on the latest field data.";
-
-    if (lower.includes("weather") || lower.includes("rain") || lower.includes("forecast")) {
-      widget = "weather";
-      reply = "Here's the outlook for your area over the next few days.";
-    } else if (lower.includes("price") || lower.includes("market") || lower.includes("sell")) {
-      widget = "prices";
-      reply = "Here are today's indicative prices from nearby markets.";
-    } else if (lower.includes("pest") || lower.includes("leaves") || lower.includes("bug")) {
-      reply =
-        "That pattern is consistent with aphid or leafhopper damage. Inspect the undersides of leaves — if you see clusters of small insects, a neem-oil spray applied in the early morning is a safe first step.";
-    } else if (lower.includes("scheme") || lower.includes("subsidy") || lower.includes("tractor")) {
-      reply =
-        "A few schemes could apply depending on your district: the Parish Development Model input grants and the Agricultural Credit Facility for equipment financing. I can help you check eligibility.";
-    }
-
-    setMessages((prev) => [
-      ...prev,
-      { id: prev.length + 1, role: "user", content: text },
-      { id: prev.length + 2, role: "assistant", content: reply, widget },
-    ]);
-  }
-
-  function handleNewChat() {
-    setMessages([]);
-    setActiveChatId(null);
-  }
-
-  const hasConversation = messages.length > 0;
-
   return (
-    <div className="flex min-h-screen bg-cream">
-      <Sidebar
-        activeChatId={activeChatId}
-        onSelectChat={setActiveChatId}
-        onNewChat={handleNewChat}
-      />
-
-      <main className="flex flex-1 flex-col">
-        {!hasConversation ? (
-          <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-10">
-            <div className="text-center">
-              <p className="font-display text-3xl font-semibold text-ink sm:text-4xl">
-                {greeting()}, Farmer!
-              </p>
-              <p className="mt-2 text-ink/55">
-                How can I help you with your farm today?
-              </p>
+    <div className="min-h-screen bg-gradient-to-b from-forest via-forest/95 to-forest/90 text-cream">
+      {/* Header */}
+      <header className="border-b border-white/10 bg-forest/50 backdrop-blur px-6 py-4 sticky top-0 z-50">
+        <div className="mx-auto max-w-7xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-fg-green flex items-center justify-center">
+              <Sprout className="text-forest" size={24} />
             </div>
-
-            <div className="mt-8">
-              <ChatInput onSend={respondTo} />
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {QUICK_ACTIONS.map((action) => (
-                <QuickActionCard
-                  key={action.key}
-                  icon={action.icon}
-                  title={action.title}
-                  description={action.description}
-                  accent={action.accent}
-                  onClick={() => respondTo(action.prompt)}
-                />
-              ))}
+            <div>
+              <p className="font-display text-lg font-bold">Farm Guard</p>
+              <p className="text-xs text-cream/70">GSM Monitoring</p>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-1 flex-col">
-            <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 overflow-y-auto px-6 py-8">
-              {messages.map((m) => (
-                <ChatMessage
-                  key={m.id}
-                  role={m.role}
-                  content={m.content}
-                  widget={m.widget}
-                />
-              ))}
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition text-sm font-medium flex items-center gap-2"
+            >
+              <LogIn size={18} />
+              Sign In
+            </Link>
+            <Link
+              href="/signup"
+              className="px-4 py-2 rounded-lg bg-fg-green text-forest hover:bg-fg-green/90 transition text-sm font-semibold flex items-center gap-2"
+            >
+              <UserPlus size={18} />
+              Sign Up
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-20">
+        <div className="max-w-4xl text-center space-y-8">
+          <div className="space-y-6">
+            <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+              Farm Monitoring Made
+              <span className="block text-fg-green"> Simple & Smart</span>
+            </h1>
+            <p className="text-xl text-cream/80 max-w-2xl mx-auto leading-relaxed">
+              Real-time IoT monitoring for agricultural fields. Track soil moisture, pH levels, 
+              humidity, and more. Make data-driven decisions to optimize your farm's productivity.
+            </p>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+            <Link
+              href="/login"
+              className="px-8 py-4 bg-fg-green text-forest rounded-lg font-bold text-lg hover:bg-fg-green/90 transition inline-flex items-center justify-center gap-2"
+            >
+              <LogIn size={22} />
+              Get Started
+            </Link>
+            <a
+              href="#features"
+              className="px-8 py-4 bg-white/10 rounded-lg font-bold text-lg hover:bg-white/20 transition inline-flex items-center justify-center gap-2 border border-white/20"
+            >
+              Learn More
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div id="features" className="px-6 py-20 bg-black/20">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-16">Key Features</h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Feature 1 */}
+            <div className="bg-white/5 backdrop-blur border border-white/10 rounded-xl p-8 hover:bg-white/10 transition">
+              <div className="h-12 w-12 rounded-lg bg-fg-green/20 flex items-center justify-center mb-4">
+                <AlertCircle className="text-fg-green" size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Real-Time Alerts</h3>
+              <p className="text-cream/70 leading-relaxed">
+                Get instant notifications when soil conditions change, water levels drop, or equipment needs attention.
+              </p>
             </div>
-            <div className="mx-auto w-full max-w-3xl px-6 pb-6">
-              <ChatInput onSend={respondTo} />
+
+            {/* Feature 2 */}
+            <div className="bg-white/5 backdrop-blur border border-white/10 rounded-xl p-8 hover:bg-white/10 transition">
+              <div className="h-12 w-12 rounded-lg bg-fg-green/20 flex items-center justify-center mb-4">
+                <BarChart3 className="text-fg-green" size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Data Analytics</h3>
+              <p className="text-cream/70 leading-relaxed">
+                Analyze historical data, identify trends, and make informed decisions to improve crop yield.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="bg-white/5 backdrop-blur border border-white/10 rounded-xl p-8 hover:bg-white/10 transition">
+              <div className="h-12 w-12 rounded-lg bg-fg-green/20 flex items-center justify-center mb-4">
+                <MapPin className="text-fg-green" size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Field Mapping</h3>
+              <p className="text-cream/70 leading-relaxed">
+                Visualize sensor locations across your farm and monitor multiple zones simultaneously.
+              </p>
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="px-6 py-20">
+        <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 text-center">
+          <div>
+            <p className="text-5xl font-bold text-fg-green mb-2">500+</p>
+            <p className="text-cream/70">Active Farmers</p>
+          </div>
+          <div>
+            <p className="text-5xl font-bold text-fg-green mb-2">10K+</p>
+            <p className="text-cream/70">Sensor Nodes</p>
+          </div>
+          <div>
+            <p className="text-5xl font-bold text-fg-green mb-2">99.8%</p>
+            <p className="text-cream/70">Uptime</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer CTA */}
+      <div className="px-6 py-20 border-t border-white/10">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <h2 className="text-3xl font-bold">Ready to Transform Your Farm?</h2>
+          <p className="text-cream/70 text-lg">
+            Join hundreds of farmers already using Farm Guard to optimize their operations.
+          </p>
+          <Link
+            href="/login"
+            className="inline-flex px-8 py-4 bg-fg-green text-forest rounded-lg font-bold text-lg hover:bg-fg-green/90 transition items-center gap-2"
+          >
+            <LogIn size={22} />
+            Start Free Trial
+          </Link>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 bg-black/20 px-6 py-8">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-cream/60">
+          <p>&copy; 2024 Farm Guard. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-cream transition">Privacy Policy</a>
+            <a href="#" className="hover:text-cream transition">Terms of Service</a>
+            <a href="#" className="hover:text-cream transition">Contact</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

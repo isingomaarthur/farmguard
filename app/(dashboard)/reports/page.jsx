@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Download, ChevronDown } from "lucide-react";
 import {
   BarChart,
@@ -15,8 +15,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { reportAPI } from "@/lib/api";
 
-const SUMMARY_CARDS = [
+const DEFAULT_SUMMARY_CARDS = [
   { label: "Average Humidity", value: "57.1%", tone: "text-green-700", bg: "bg-green-600/10" },
   { label: "Average Soil Moisture", value: "44.1%", tone: "text-blue-700", bg: "bg-blue-600/10" },
   { label: "Average pH Level", value: "6.7", tone: "text-purple-700", bg: "bg-purple-600/10" },
@@ -33,15 +34,44 @@ const WEEKLY_DATA = [
   { day: "Sun", humidity: 53, moisture: 41, ph: 6.5 },
 ];
 
-const ALERT_DISTRIBUTION = [
-  { name: "Warning", value: 25, color: "#F59E0B" },
-  { name: "Critical", value: 20, color: "#DC2626" },
-  { name: "Info", value: 30, color: "#3B82F6" },
-  { name: "Normal", value: 25, color: "#22C55E" },
-];
-
 export default function ReportsPage() {
-  const [period, setPeriod] = useState("Last Week");
+  const [period, setPeriod] = useState("week");
+  const [summaryCards, setSummaryCards] = useState(DEFAULT_SUMMARY_CARDS);
+  const [weeklyData, setWeeklyData] = useState(WEEKLY_DATA);
+  const [alertDistribution, setAlertDistribution] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReportData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch report data for the selected period
+        const reportData = await reportAPI.getReportData(period);
+        if (reportData?.summaryCards) {
+          setSummaryCards(reportData.summaryCards);
+        }
+
+        // Fetch daily trends
+        const trendsData = await reportAPI.getDailyTrends();
+        if (Array.isArray(trendsData)) {
+          setWeeklyData(trendsData);
+        }
+
+        // Fetch alert distribution
+        const distributionData = await reportAPI.getAlertDistribution();
+        if (Array.isArray(distributionData)) {
+          setAlertDistribution(distributionData);
+        }
+      } catch (error) {
+        console.error("Error fetching report data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReportData();
+  }, [period]);
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -57,9 +87,9 @@ export default function ReportsPage() {
               onChange={(e) => setPeriod(e.target.value)}
               className="appearance-none rounded-lg border border-ink/15 bg-white py-2 pl-3 pr-9 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-fg-green/30"
             >
-              <option>Last Week</option>
-              <option>Last Month</option>
-              <option>Last 3 Months</option>
+              <option value="week">Last Week</option>
+              <option value="month">Last Month</option>
+              <option value="quarter">Last 3 Months</option>
             </select>
             <ChevronDown
               size={15}
@@ -75,7 +105,7 @@ export default function ReportsPage() {
 
       {/* Summary cards */}
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {SUMMARY_CARDS.map((card) => (
+        {summaryCards.map((card) => (
           <div
             key={card.label}
             className={`rounded-xl2 border border-ink/10 p-5 shadow-sm ${card.bg}`}
@@ -95,7 +125,7 @@ export default function ReportsPage() {
           <p className="mb-4 font-display text-lg font-bold text-ink">Weekly Sensor Overview</p>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={WEEKLY_DATA} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+              <BarChart data={weeklyData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
                 <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#7a7a70" }} />
                 <YAxis tick={{ fontSize: 11, fill: "#7a7a70" }} />
@@ -122,14 +152,14 @@ export default function ReportsPage() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={ALERT_DISTRIBUTION}
+                  data={alertDistribution}
                   dataKey="value"
                   nameKey="name"
                   innerRadius={0}
                   outerRadius={95}
                   label={({ name, value }) => `${name} ${value}%`}
                 >
-                  {ALERT_DISTRIBUTION.map((entry) => (
+                  {alertDistribution.map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />
                   ))}
                 </Pie>
