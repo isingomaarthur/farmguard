@@ -10,6 +10,7 @@ import { Eye, EyeOff, UserPlus } from "lucide-react";
 export default function SignupPage() {
   const router = useRouter();
   const { setAuth } = useAuth();
+  const [selectedRole, setSelectedRole] = useState('farmer');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -54,6 +55,7 @@ export default function SignupPage() {
         email: formData.email,
         password: formData.password,
         farmName: formData.farmName,
+        role: selectedRole,
       });
 
       if (!response?.success) {
@@ -96,6 +98,31 @@ export default function SignupPage() {
               <p className="text-red-200 text-sm">{error}</p>
             </div>
           )}
+
+          {/* Role selection (choose role for new account) */}
+          <div className="mb-4">
+            <p className="text-sm text-cream/80 mb-3">Which role best describes you?</p>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              {[
+                { key: 'farmer', label: 'Farmer', color: 'bg-green-500' },
+                { key: 'technician', label: 'Technician', color: 'bg-blue-500' },
+                { key: 'agronomist', label: 'Agronomist', color: 'bg-orange-400' },
+                { key: 'admin', label: 'Admin', color: 'bg-red-500' },
+              ].map((r) => (
+                <button
+                  key={r.key}
+                  type="button"
+                  onClick={() => setSelectedRole(r.key)}
+                  className={`flex items-center gap-3 p-3 rounded-lg border ${selectedRole === r.key ? 'border-white/40 shadow-lg' : 'border-white/10'} bg-white/3`}
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${r.color}`}>{r.label.charAt(0)}</div>
+                  <div className="text-left">
+                    <div className="font-semibold text-cream">{r.label}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Signup Form */}
           <form onSubmit={handleSubmit} className="space-y-4 mb-6">

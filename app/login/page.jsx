@@ -10,6 +10,7 @@ import { Eye, EyeOff, LogIn } from "lucide-react";
 export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuth();
+  const [selectedRole, setSelectedRole] = useState('farmer');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -46,6 +47,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Role selection is UI-only for sign-in (does not alter auth flow)
     await performLogin(email, password);
   };
 
@@ -71,6 +73,31 @@ export default function LoginPage() {
         <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-8 shadow-2xl">
           <h2 className="text-2xl font-bold mb-6">Sign In</h2>
 
+          {/* Role selection (UI only) */}
+          <div className="mb-6">
+            <p className="text-sm text-cream/80 mb-3">Select role to continue</p>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { key: 'farmer', label: 'Farmer', color: 'bg-green-500' },
+                { key: 'technician', label: 'Technician', color: 'bg-blue-500' },
+                { key: 'agronomist', label: 'Agronomist', color: 'bg-orange-400' },
+                { key: 'admin', label: 'Admin', color: 'bg-red-500' },
+              ].map((r) => (
+                <button
+                  key={r.key}
+                  type="button"
+                  onClick={() => setSelectedRole(r.key)}
+                  className={`flex items-center gap-3 p-4 rounded-lg border ${selectedRole === r.key ? 'border-white/40 shadow-lg' : 'border-white/10'} bg-white/3`}
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${r.color}`}>{r.label.charAt(0)}</div>
+                  <div className="text-left">
+                    <div className="font-semibold text-cream">{r.label}</div>
+                    <div className="text-cream/60 text-sm">{r.label === 'Admin' ? 'Full system access and user management' : r.label === 'Technician' ? 'Maintain sensors and equipment' : r.label === 'Agronomist' ? 'Analyze data and provide recommendations' : 'Monitor and manage farm operations'}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
           {error && (
             <div className="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg">
               <p className="text-red-200 text-sm">{error}</p>

@@ -1,8 +1,11 @@
 "use client";
 
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Bell, BarChart2, Map, User, MessageSquare } from "lucide-react";
+import { Home, Bell, BarChart2, Map, User, MessageSquare, ShieldCheck } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -14,6 +17,10 @@ const NAV_ITEMS = [
 
 export default function FarmGuardSidebar({ open, onClose }) {
   const pathname = usePathname();
+  const { getAuth } = useAuth();
+  const auth = getAuth();
+  const isAdmin = auth?.user?.role === 'admin';
+  const navItems = isAdmin ? [...NAV_ITEMS, { href: '/admin', label: 'Admin', icon: ShieldCheck }] : NAV_ITEMS;
 
   return (
     <>
@@ -63,7 +70,7 @@ export default function FarmGuardSidebar({ open, onClose }) {
 
         <nav className="mt-2 border-t border-ink/10 px-4 py-4">
           <ul className="space-y-1">
-            {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+            {navItems.map(({ href, label, icon: Icon }) => {
               const active = pathname === href;
               return (
                 <li key={href}>
