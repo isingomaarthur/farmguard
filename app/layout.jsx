@@ -1,5 +1,6 @@
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import Logo from "@/components/Logo";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -31,7 +32,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${plexMono.variable}`}>
-      <body className="font-body bg-cream text-ink antialiased">{children}</body>
+      <body className="font-body bg-cream text-ink antialiased">
+        <div className="fixed top-4 left-4 z-50 pointer-events-none">
+          <Logo variant="small" />
+        </div>
+        {children}
+      </body>
     </html>
   );
 }

@@ -12,7 +12,7 @@ export default function Logo({ variant = 'medium', alt = 'Farm Guard logo' }) {
 
   return (
     <Image
-      src="/logo/original.png"
+      src="/logo.png"
       alt={alt}
       width={width}
       height={height}
