@@ -70,7 +70,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-forest via-forest/95 to-forest/90 text-cream flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen relative bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-800 text-white flex items-center justify-center px-4 py-10">
       <div className="absolute left-6 top-6">
         <Logo variant="small" alt="Farm Guard" />
       </div>
@@ -79,21 +79,21 @@ export default function LoginPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_45%)]" />
           <div className="relative grid gap-8 lg:grid-cols-[1.15fr_1fr] p-10">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-3 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-cream ring-1 ring-white/10">
+              <div className="inline-flex items-center gap-3 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/10">
                 <Logo variant="small" alt="FarmGuard logo" />
-                Farm Guard preview
+                Farm Guard access
               </div>
 
               <div className="space-y-4">
                 <h1 className="text-4xl font-bold tracking-tight">Sign in to Farm Guard</h1>
-                <p className="max-w-xl text-base text-cream/80">
-                  Use your account credentials or select one of the demo roles below. Each demo account gets its own preview dataset.
+                <p className="max-w-xl text-base text-emerald-50/90">
+                  Use your account credentials or choose a role-based access option for quick entry.
                 </p>
               </div>
 
-              <div className="space-y-3 rounded-3xl bg-white/5 border border-white/10 p-6 text-sm text-cream/80">
-                <p className="font-semibold text-cream">Demo access</p>
-                <p>Choose admin, farmer, technician, or agronomist and click the demo button. Your selected demo account will be created automatically.</p>
+              <div className="space-y-3 rounded-3xl bg-white/5 border border-white/10 p-6 text-sm text-emerald-50/90">
+                <p className="font-semibold text-white">Quick access</p>
+                <p>Choose a role and continue with a guided sign-in experience for your workspace.</p>
               </div>
             </div>
 
@@ -103,7 +103,7 @@ export default function LoginPage() {
                   <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Account login</p>
                   <h2 className="text-2xl font-semibold text-white">Welcome back</h2>
                 </div>
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-fg-green text-white">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-emerald-500 text-white">
                   <Logo variant="small" alt="FG" />
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function LoginPage() {
               </form>
 
               <div className="mt-6 rounded-3xl border border-white/10 bg-slate-950/80 p-4 text-sm text-slate-300">
-                <p className="mb-3 font-semibold text-white">Choose a demo role</p>
+                <p className="mb-3 font-semibold text-white">Choose a role</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {demoRoles.map((role) => (
                     <button
@@ -177,7 +177,6 @@ export default function LoginPage() {
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="font-semibold">{role.label}</span>
-                        <span className="text-xs uppercase tracking-[0.24em] text-slate-400">demo</span>
                       </div>
                       <p className="mt-2 text-xs leading-5 text-slate-400">{role.description}</p>
                     </button>
@@ -192,7 +191,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="inline-flex w-full items-center justify-center rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {loading ? "Signing in..." : `Use demo ${selectedRole} account`}
+                  {loading ? "Signing in..." : `Continue as ${selectedRole}`}
                 </button>
 
                 <Link

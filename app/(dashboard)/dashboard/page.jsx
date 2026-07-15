@@ -160,7 +160,7 @@ export default function DashboardPage() {
   ] : [
     {
       key: "sensors",
-      label: "Demo sensors",
+      label: "Farm sensors",
       value: dashboardData?.stats?.totalSensors ?? "—",
       unit: "",
       status: "ANALYZED",
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-ink/50">No alerts found for this demo farm yet.</p>
+                <p className="text-sm text-ink/50">No alerts found for this farm yet.</p>
               )}
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function DashboardPage() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-ink/50">No offline or warning devices found for this demo account.</p>
+                <p className="text-sm text-ink/50">No offline or warning devices found for this account.</p>
               )}
             </div>
           </div>

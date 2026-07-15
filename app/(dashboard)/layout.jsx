@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-fg-cream">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-800">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-fg-green"></div>
           <p className="mt-4 text-ink/70">Loading...</p>
@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-fg-cream">
+    <div className="flex min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
       <FarmGuardSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex min-h-screen flex-1 flex-col">
