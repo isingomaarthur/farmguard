@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Bell, BarChart2, Map, User, MessageSquare, ShieldCheck } from "lucide-react";
+import Logo from "@/components/Logo";
 import { useAuth } from "@/lib/auth";
 
 const NAV_ITEMS = [
@@ -40,29 +41,7 @@ export default function FarmGuardSidebar({ open, onClose }) {
       >
         <div className="flex flex-col items-center gap-2 px-6 pb-5 pt-8 text-center">
           <div className="grid h-16 w-16 place-items-center rounded-lg border border-ink/10 bg-white shadow-sm">
-            <svg viewBox="0 0 24 24" className="h-9 w-9 text-fg-green" fill="none">
-              <path
-                d="M4 11.5 12 5l8 6.5"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M6 10.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8.5"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M10 20v-4.5a2 2 0 0 1 4 0V20"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Logo variant="medium" alt="Farm Guard" />
           </div>
           <p className="font-display text-xl font-bold text-fg-green">Farm Guard Uganda</p>
           <p className="text-sm text-ink/50">GSM Monitoring System</p>
@@ -83,11 +62,17 @@ export default function FarmGuardSidebar({ open, onClose }) {
                         : "text-ink/70 hover:bg-ink/5"
                     }`}
                   >
-                    <Icon
-                      size={20}
-                      className={active ? "text-fg-green" : "text-ink/50"}
-                      strokeWidth={2}
-                    />
+                    {href === '/dashboard' ? (
+                      <div className="flex items-center justify-center">
+                        <Logo variant="small" alt="Farm Guard" />
+                      </div>
+                    ) : (
+                      <Icon
+                        size={20}
+                        className={active ? "text-fg-green" : "text-ink/50"}
+                        strokeWidth={2}
+                      />
+                    )}
                     {label}
                   </Link>
                 </li>

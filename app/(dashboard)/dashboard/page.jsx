@@ -70,7 +70,9 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
-  const STAT_CARDS = [
+  const role = profile?.role || 'admin';
+
+  const STAT_CARDS = role === 'admin' ? [
     {
       key: "users",
       label: "Total users",
@@ -98,7 +100,226 @@ export default function DashboardPage() {
       icon: Beaker,
       color: "#2F6B41",
     },
+  ] : role === 'farmer' ? [
+    {
+      key: "sensors",
+      label: "Farm sensors",
+      value: dashboardData?.stats?.totalSensors ?? "—",
+      unit: "",
+      status: "MONITORED",
+      icon: Droplets,
+      color: "#2F6B41",
+    },
+    {
+      key: "activeSensors",
+      label: "Active sensors",
+      value: dashboardData?.stats?.activeSensors ?? "—",
+      unit: "",
+      status: "ONLINE",
+      icon: Activity,
+      color: "#2F6B41",
+    },
+    {
+      key: "alerts",
+      label: "Alerts",
+      value: dashboardData?.stats?.alertCount ?? "—",
+      unit: "",
+      status: "ISSUES",
+      icon: Beaker,
+      color: "#2F6B41",
+    },
+  ] : role === 'technician' ? [
+    {
+      key: "devices",
+      label: "Total devices",
+      value: dashboardData?.stats?.totalDevices ?? "—",
+      unit: "",
+      status: "TRACKED",
+      icon: Droplets,
+      color: "#2F6B41",
+    },
+    {
+      key: "warning",
+      label: "Warning devices",
+      value: dashboardData?.stats?.warningDevices ?? "—",
+      unit: "",
+      status: "WARN",
+      icon: Activity,
+      color: "#2F6B41",
+    },
+    {
+      key: "critical",
+      label: "Critical devices",
+      value: dashboardData?.stats?.criticalDevices ?? "—",
+      unit: "",
+      status: "ALERT",
+      icon: Beaker,
+      color: "#2F6B41",
+    },
+  ] : [
+    {
+      key: "sensors",
+      label: "Demo sensors",
+      value: dashboardData?.stats?.totalSensors ?? "—",
+      unit: "",
+      status: "ANALYZED",
+      icon: Droplets,
+      color: "#2F6B41",
+    },
+    {
+      key: "avgPh",
+      label: "Avg soil pH",
+      value: dashboardData?.stats?.avgPh ? dashboardData.stats.avgPh.toFixed(2) : "—",
+      unit: "",
+      status: "STABLE",
+      icon: Activity,
+      color: "#2F6B41",
+    },
+    {
+      key: "avgMoisture",
+      label: "Avg moisture",
+      value: dashboardData?.stats?.avgMoisture ? `${dashboardData.stats.avgMoisture.toFixed(1)}%` : "—",
+      unit: "",
+      status: "MONITORED",
+      icon: Beaker,
+      color: "#2F6B41",
+    },
   ];
+
+  const renderRoleSection = () => {
+    if (!profile || !dashboardData) {
+      return null;
+    }
+
+    const role = profile.role;
+
+    if (role === 'farmer') {
+      return (
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-ink">Farm sensors by status</p>
+            <div className="mt-4 space-y-3 text-sm text-ink/70">
+              {dashboardData.farmOverview?.sensorsByStatus?.map((item) => (
+                <div key={item.status} className="flex items-center justify-between">
+                  <span>{item.status}</span>
+                  <span className="font-semibold">{item.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm lg:col-span-2">
+            <p className="text-sm font-semibold text-ink">Latest alerts</p>
+            <div className="mt-4 space-y-3 text-sm text-ink/70">
+              {dashboardData.farmOverview?.currentAlerts?.length ? (
+                dashboardData.farmOverview.currentAlerts.map((alert) => (
+                  <div key={alert.id} className="rounded-2xl border border-ink/10 bg-ink/5 p-4">
+                    <p className="font-semibold text-ink">{alert.title}</p>
+                    <p className="mt-1 text-xs text-ink/60">{alert.message}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-ink/50">No alerts found for this demo farm yet.</p>
+              )}
+            </div>
+          </div>
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm lg:col-span-3">
+            <p className="text-sm font-semibold text-ink">Recent readings</p>
+            <div className="mt-4 overflow-x-auto">
+              <table className="min-w-full text-left text-sm text-ink/75">
+                <thead className="border-b border-ink/10 text-ink/60">
+                  <tr>
+                    <th className="px-3 py-2">Node</th>
+                    <th className="px-3 py-2">Type</th>
+                    <th className="px-3 py-2">Value</th>
+                    <th className="px-3 py-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboardData.farmOverview?.recentReadings?.map((reading, index) => (
+                    <tr key={`${reading.nodeId}-${index}`} className="border-b border-ink/10">
+                      <td className="px-3 py-3">{reading.node_id || reading.nodeId}</td>
+                      <td className="px-3 py-3">{reading.sensor_type || reading.sensorType}</td>
+                      <td className="px-3 py-3">{reading.value} {reading.unit}</td>
+                      <td className="px-3 py-3">{reading.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (role === 'technician') {
+      return (
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-ink">Device status</p>
+            <div className="mt-4 space-y-3 text-sm text-ink/70">
+              {dashboardData.deviceStatus?.deviceStatus?.map((item) => (
+                <div key={item.status} className="flex items-center justify-between">
+                  <span>{item.status}</span>
+                  <span className="font-semibold">{item.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm lg:col-span-2">
+            <p className="text-sm font-semibold text-ink">Offline / attention-needed devices</p>
+            <div className="mt-4 space-y-3 text-sm text-ink/70">
+              {dashboardData.deviceStatus?.offlineDevices?.length ? (
+                dashboardData.deviceStatus.offlineDevices.map((device) => (
+                  <div key={device.node_id} className="rounded-2xl border border-ink/10 bg-ink/5 p-4">
+                    <p className="font-semibold text-ink">{device.node_id}</p>
+                    <p className="mt-1 text-xs text-ink/60">{device.zone} • {device.status} • Battery {device.battery_level}%</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-ink/50">No offline or warning devices found for this demo account.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (role === 'agronomist') {
+      return (
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-ink">Soil pH average</p>
+            <p className="mt-4 text-3xl font-bold text-ink">{dashboardData.soilAnalysis?.avgPh?.toFixed(2) ?? '—'}</p>
+          </div>
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-ink">Moisture average</p>
+            <p className="mt-4 text-3xl font-bold text-ink">{dashboardData.soilAnalysis?.avgMoisture?.toFixed(1) ?? '—'}%</p>
+          </div>
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-ink">Pest alerts</p>
+            <p className="mt-4 text-3xl font-bold text-ink">{dashboardData.soilAnalysis?.pestAlerts?.length ?? 0}</p>
+          </div>
+          <div className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-sm lg:col-span-3">
+            <p className="text-sm font-semibold text-ink">Pest advisory alerts</p>
+            <div className="mt-4 space-y-3 text-sm text-ink/70">
+              {dashboardData.soilAnalysis?.pestAlerts?.length ? (
+                dashboardData.soilAnalysis.pestAlerts.map((alert) => (
+                  <div key={alert.id} className="rounded-2xl border border-ink/10 bg-ink/5 p-4">
+                    <p className="font-semibold text-ink">{alert.title}</p>
+                    <p className="mt-1 text-xs text-ink/60">{alert.message}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-ink/50">No pest advisory alerts available.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -136,6 +357,8 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>
+
+      {renderRoleSection()}
 
       {/* Trend charts */}
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">

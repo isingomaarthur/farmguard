@@ -6,20 +6,22 @@ import Link from "next/link";
 import { authAPI } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuth();
-  const [selectedRole, setSelectedRole] = useState('farmer');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState("farmer");
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("admin");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const performLogin = async (loginEmail, loginPassword) => {
     if (!loginEmail || !loginPassword) {
-      setError("Please enter email and password");
+      setError("Please enter email and password.");
       return;
     }
 
@@ -27,19 +29,11 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await authAPI.login({
-        email: loginEmail,
-        password: loginPassword,
-      });
-
-      if (!response?.success) {
-        throw new Error(response?.message || "Login failed");
-      }
-
+      const response = await authAPI.login({ email: loginEmail, password: loginPassword });
       setAuth(response.token, response.user);
       router.push("/dashboard");
     } catch (err) {
-      setError(err.message || "Login failed. Please check your credentials.");
+      setError(err.message || "Unable to sign in. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -47,108 +41,182 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Role selection is UI-only for sign-in (does not alter auth flow)
     await performLogin(email, password);
   };
 
+  const handleDemoLogin = async (role) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await authAPI.demoLogin(role);
+<<<<<<< HEAD
+      if (!response?.success) {
+        throw new Error(response?.message || "Demo login failed");
+      }
+=======
+>>>>>>> 3ec7600 (changes for all section in the app)
+      setAuth(response.token, response.user);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err.message || "Unable to sign in with demo account.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const demoRoles = [
+    { key: 'admin', label: 'Admin', description: 'Full system overview and user management' },
+    { key: 'farmer', label: 'Farmer', description: 'Farm monitoring with field sensors and alerts' },
+    { key: 'technician', label: 'Technician', description: 'Device maintenance view with offline alerts' },
+    { key: 'agronomist', label: 'Agronomist', description: 'Soil analysis and pest advisory data' }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-forest via-forest/95 to-forest/90 text-cream flex items-center justify-center px-4">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-fg-green/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-fg-green/10 rounded-full blur-3xl"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-forest via-forest/95 to-forest/90 text-cream flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-2xl">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-cream/20 bg-white/10 shadow-2xl backdrop-blur-xl">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_45%)]" />
+          <div className="relative grid gap-8 lg:grid-cols-[1.15fr_1fr] p-10">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-3 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-cream ring-1 ring-white/10">
+                <Logo variant="small" alt="FarmGuard logo" />
+                Farm Guard preview
+              </div>
 
-      <div className="relative w-full max-w-md">
-        {/* Logo Section */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-3xl mb-4 border border-white/20">
-            <span className="text-3xl font-bold text-fg-green">FG</span>
-          </div>
-          <h1 className="text-3xl font-bold mb-2">Farm Guard</h1>
-          <p className="text-cream/70">GSM Monitoring System</p>
-        </div>
+              <div className="space-y-4">
+                <h1 className="text-4xl font-bold tracking-tight">Sign in to Farm Guard</h1>
+                <p className="max-w-xl text-base text-cream/80">
+                  Use your account credentials or select one of the demo roles below. Each demo account gets its own preview dataset.
+                </p>
+              </div>
 
-        {/* Login Card */}
-        <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-8 shadow-2xl">
-          <h2 className="text-2xl font-bold mb-6">Sign In</h2>
-
-          {/* Role selection (UI only) */}
-          <div className="mb-6">
-            <p className="text-sm text-cream/80 mb-3">Select role to continue</p>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { key: 'farmer', label: 'Farmer', color: 'bg-green-500' },
-                { key: 'technician', label: 'Technician', color: 'bg-blue-500' },
-                { key: 'agronomist', label: 'Agronomist', color: 'bg-orange-400' },
-                { key: 'admin', label: 'Admin', color: 'bg-red-500' },
-              ].map((r) => (
-                <button
-                  key={r.key}
-                  type="button"
-                  onClick={() => setSelectedRole(r.key)}
-                  className={`flex items-center gap-3 p-4 rounded-lg border ${selectedRole === r.key ? 'border-white/40 shadow-lg' : 'border-white/10'} bg-white/3`}
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${r.color}`}>{r.label.charAt(0)}</div>
-                  <div className="text-left">
-                    <div className="font-semibold text-cream">{r.label}</div>
-                    <div className="text-cream/60 text-sm">{r.label === 'Admin' ? 'Full system access and user management' : r.label === 'Technician' ? 'Maintain sensors and equipment' : r.label === 'Agronomist' ? 'Analyze data and provide recommendations' : 'Monitor and manage farm operations'}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-          {error && (
-            <div className="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg">
-              <p className="text-red-200 text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-fg-green/50 text-cream placeholder-cream/50 transition"
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-fg-green/50 text-cream placeholder-cream/50 transition"
-                  disabled={loading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-cream/70 hover:text-cream"
-                  disabled={loading}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+              <div className="space-y-3 rounded-3xl bg-white/5 border border-white/10 p-6 text-sm text-cream/80">
+                <p className="font-semibold text-cream">Demo access</p>
+                <p>Choose admin, farmer, technician, or agronomist and click the demo button. Your selected demo account will be created automatically.</p>
               </div>
             </div>
 
+            <div className="rounded-[2rem] bg-slate-950/90 p-8 shadow-2xl ring-1 ring-white/10">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Account login</p>
+                  <h2 className="text-2xl font-semibold text-white">Welcome back</h2>
+                </div>
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-fg-green text-white">
+                  <Logo variant="small" alt="FG" />
+                </div>
+              </div>
+
+<<<<<<< HEAD
+              {error && (
+                <div className="mb-4 rounded-3xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <label className="block text-sm text-slate-300">
+                  Email
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="mt-2 w-full rounded-3xl border border-slate-800 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-fg-green focus:ring-2 focus:ring-fg-green/20"
+                    disabled={loading}
+                  />
+                </label>
+
+                <label className="block text-sm text-slate-300">
+                  Password
+                  <div className="relative mt-2">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full rounded-3xl border border-slate-800 bg-slate-950/80 px-4 py-3 pr-12 text-white outline-none focus:border-fg-green focus:ring-2 focus:ring-fg-green/20"
+                      disabled={loading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                      disabled={loading}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full rounded-3xl bg-fg-green px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-[#6dff96] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <LogIn size={18} />
+                    {loading ? "Signing in..." : "Sign in"}
+                  </span>
+                </button>
+              </form>
+
+              <div className="mt-6 rounded-3xl border border-white/10 bg-slate-950/80 p-4 text-sm text-slate-300">
+                <p className="mb-3 font-semibold text-white">Choose a demo role</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {demoRoles.map((role) => (
+                    <button
+                      type="button"
+                      key={role.key}
+                      onClick={() => setSelectedRole(role.key)}
+                      disabled={loading}
+                      className={`rounded-3xl border px-4 py-3 text-left transition ${
+                        selectedRole === role.key
+                          ? 'border-fg-green bg-fg-green/10 text-white'
+                          : 'border-slate-800 bg-slate-950/80 text-slate-300 hover:border-white/30 hover:bg-slate-900'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-semibold">{role.label}</span>
+                        <span className="text-xs uppercase tracking-[0.24em] text-slate-400">demo</span>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-slate-400">{role.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin(selectedRole)}
+                  disabled={loading}
+                  className="inline-flex w-full items-center justify-center rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? "Signing in..." : `Use demo ${selectedRole} account`}
+                </button>
+
+                <Link
+                  href="/signup"
+                  className="text-center text-sm text-slate-300 hover:text-white"
+                >
+                  Need a new account? Contact support.
+                </Link>
+              </div>
+            </div>
+=======
+          <div className="space-y-3 mb-6">
+            <p className="text-sm text-cream/80">Or use a demo account for the selected role:</p>
             <button
-              type="submit"
+              type="button"
+              onClick={() => handleDemoLogin(selectedRole)}
               disabled={loading}
-              className="w-full mt-6 py-3 bg-fg-green text-forest font-semibold rounded-lg hover:bg-fg-green/90 disabled:bg-fg-green/50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-lg border border-white/10 bg-white/5 text-cream font-semibold transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <LogIn size={20} />
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Signing in..." : `Use demo ${selectedRole} account`}
             </button>
-          </form>
+          </div>
 
           {/* Signup Link */}
           <div className="border-t border-white/10 pt-6">
@@ -158,13 +226,9 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </p>
+>>>>>>> 86c0943 (Update root login demo flow and API client for multi-role demo login)
           </div>
         </div>
-
-        {/* Footer Info */}
-        <p className="text-center text-xs text-cream/50 mt-6">
-          Farm monitoring made simple and accessible
-        </p>
       </div>
     </div>
   );

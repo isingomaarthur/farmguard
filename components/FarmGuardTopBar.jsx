@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Menu, Wifi, LogOut, User } from "lucide-react";
+import Logo from "@/components/Logo";
 import { authAPI } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
@@ -35,22 +36,7 @@ export default function FarmGuardTopBar({ onMenuClick, online = true }) {
           <Menu size={22} />
         </button>
         <div className="hidden h-8 w-8 items-center justify-center rounded bg-white sm:flex">
-          <svg viewBox="0 0 24 24" className="h-5 w-5 text-fg-green" fill="none">
-            <path
-              d="M4 11.5 12 5l8 6.5"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M6 10.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8.5"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <Logo variant="small" alt="Farm Guard" />
         </div>
         <span className="font-display text-lg font-bold sm:text-xl">Farm Guard Uganda</span>
       </div>

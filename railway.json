@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "platformVersion": 2,
+  "services": [
+    {
+      "name": "farmguard-backend",
+      "path": "backend",
+      "buildCommand": "npm install",
+      "startCommand": "npm run start"
+    },
+    {
+      "name": "farmguard-frontend",
+      "path": "farm-genie",
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "npm run start"
+    }
+  ]
+}
