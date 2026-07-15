@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import StatusPill from "@/components/StatusPill";
+import Logo from "@/components/Logo";
 import { authAPI, dashboardAPI } from "@/lib/api";
 
 function ChartCard({ title, children }) {
@@ -324,13 +325,16 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">
-            Welcome back, {profile?.name || "Farmer"}
-          </h1>
-          <p className="mt-1 text-sm text-ink/60">
-            {profile?.farmName ? `Monitoring ${profile.farmName}` : "Secure dashboard access"}
-          </p>
+        <div className="flex items-center gap-4">
+          <Logo variant="small" alt="Farm Guard" />
+          <div>
+            <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">
+              Welcome back, {profile?.name || "Farmer"}
+            </h1>
+            <p className="mt-1 text-sm text-ink/60">
+              {profile?.farmName ? `Monitoring ${profile.farmName}` : "Secure dashboard access"}
+            </p>
+          </div>
         </div>
         <span className="flex items-center gap-1.5 text-sm font-medium text-green-700">
           <Wifi size={16} />

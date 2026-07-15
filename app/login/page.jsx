@@ -70,7 +70,10 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-forest via-forest/95 to-forest/90 text-cream flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen relative bg-gradient-to-br from-forest via-forest/95 to-forest/90 text-cream flex items-center justify-center px-4 py-10">
+      <div className="absolute left-6 top-6">
+        <Logo variant="small" alt="Farm Guard" />
+      </div>
       <div className="w-full max-w-2xl">
         <div className="relative overflow-hidden rounded-[2.5rem] border border-cream/20 bg-white/10 shadow-2xl backdrop-blur-xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_45%)]" />

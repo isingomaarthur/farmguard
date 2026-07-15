@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
 export default function Home() {
-  redirect("/login");
+  // Make the monitoring/dashboard the app home page
+  redirect("/dashboard");
 }
