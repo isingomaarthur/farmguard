@@ -86,7 +86,7 @@ export default function SignupPage() {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                placeholder="ISINGOMA ARTHUR"
+                placeholder=""
                 className="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 placeholder-slate-400 border border-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
                 required
                 disabled={loading}
@@ -101,7 +101,7 @@ export default function SignupPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="isingomaarthur30@gmail.com"
+                placeholder=""
                 className="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 placeholder-slate-400 border border-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
                 required
                 disabled={loading}
@@ -116,7 +116,7 @@ export default function SignupPage() {
                 name="farmName"
                 value={formData.farmName}
                 onChange={handleChange}
-                placeholder="Mukono"
+                placeholder=""
                 className="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 placeholder-slate-400 border border-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
                 required
                 disabled={loading}
@@ -132,7 +132,7 @@ export default function SignupPage() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="••••••"
+                  placeholder=""
                   className="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 placeholder-slate-400 border border-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
                   required
                   disabled={loading}
@@ -143,7 +143,7 @@ export default function SignupPage() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition"
                   disabled={loading}
                 >
-                  👁️
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
                 </button>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function SignupPage() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="••••••"
+                  placeholder=""
                   className="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 placeholder-slate-400 border border-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
                   required
                   disabled={loading}
@@ -168,7 +168,7 @@ export default function SignupPage() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition"
                   disabled={loading}
                 >
-                  👁️
+                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
                 </button>
               </div>
             </div>
