@@ -14,6 +14,7 @@ export default function SignupPage() {
     fullName: '',
     email: '',
     farmName: '',
+    role: 'farmer',
     password: '',
     confirmPassword: ''
   });
@@ -48,7 +49,8 @@ export default function SignupPage() {
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
-        farmName: formData.farmName
+        farmName: formData.farmName,
+        role: formData.role
       });
 
       // Store token and redirect
@@ -121,6 +123,23 @@ export default function SignupPage() {
                 required
                 disabled={loading}
               />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-white">Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl bg-white/90 text-slate-900 border border-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+                disabled={loading}
+              >
+                <option value="farmer">Farmer</option>
+                <option value="technician">Technician</option>
+                <option value="agronomist">Agronomist</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
 
             {/* Password */}
