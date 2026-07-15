@@ -2,18 +2,42 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, Users, Trash2, CheckCircle2, AlertTriangle } from "lucide-react";
-import { userAPI } from "@/lib/api";
+import { Building2, Users, Wrench, Sprout, Wifi, AlertTriangle, TrendingUp } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { dashboardAPI, userAPI } from "@/lib/api";
+import {
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import StatusPill from "@/components/StatusPill";
+import Logo from "@/components/Logo";
+
+function StatCard({ label, value, icon: Icon, color, status }) {
+  return (
+    <div className="rounded-xl border border-ink/10 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <Icon size={22} style={{ color }} />
+        <StatusPill status={status} />
+      </div>
+      <p className="mt-3 text-sm text-ink/55">{label}</p>
+      <p className="mt-1 font-display text-3xl font-bold text-ink">{value}</p>
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const router = useRouter();
   const { getAuth } = useAuth();
   const [auth, setAuth] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [actionMessage, setActionMessage] = useState(null);
 
   useEffect(() => {
     const session = getAuth();
@@ -29,136 +53,153 @@ export default function AdminPage() {
 
     setAuth(session);
 
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await userAPI.getAllUsers();
-        setUsers(response.users || []);
+        const [dashResponse, usersResponse] = await Promise.all([
+          dashboardAPI.getDashboard(),
+          userAPI.getAllUsers(),
+        ]);
+        setDashboardData(dashResponse.dashboard);
+        setUsers(usersResponse.users || []);
       } catch (err) {
-        setError(err.message || "Unable to load users");
+        setError(err.message || "Unable to load dashboard");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchData();
   }, [getAuth, router]);
 
-  const handleDeleteUser = async (userId) => {
-    if (!auth) return;
+  // Calculate role counts
+  const farmerCount = users.filter(u => u.role === 'farmer').length;
+  const technicianCount = users.filter(u => u.role === 'technician').length;
+  const agronomistCount = users.filter(u => u.role === 'agronomist').length;
 
-    const target = users.find((user) => user.id === userId);
-    if (!target) return;
-    if (userId === auth.user.id) {
-      setError("You cannot delete your own admin account from this screen.");
-      return;
-    }
+  // Chart data for Users by Role
+  const roleChartData = [
+    { name: 'Farmers', value: farmerCount },
+    { name: 'Technicians', value: technicianCount },
+    { name: 'Agronomists', value: agronomistCount },
+  ];
 
-    if (!window.confirm(`Delete ${target.name || target.email}? This cannot be undone.`)) {
-      return;
-    }
-
-    try {
-      setActionMessage(null);
-      await userAPI.deleteUser(userId);
-      setUsers((current) => current.filter((user) => user.id !== userId));
-      setActionMessage(`${target.name || target.email} was deleted successfully.`);
-    } catch (err) {
-      setError(err.message || "Failed to delete user.");
-    }
-  };
+  // Sample alerts
+  const recentAlerts = [
+    { id: 1, title: "Low Soil Moisture", zone: "Field A", severity: "warning" },
+    { id: 2, title: "Acidic Soil pH", zone: "Orchard B", severity: "critical" },
+    { id: 3, title: "Sensor Offline", zone: "Highland Farm", severity: "critical" },
+  ];
 
   return (
-    <div className="mx-auto max-w-6xl py-2">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.24em] text-fg-green">
-            <ShieldCheck size={18} /> Admin panel
-          </p>
-          <h1 className="mt-3 font-display text-3xl font-bold text-ink">User management</h1>
-          <p className="mt-2 max-w-2xl text-sm text-ink/70">
-            Only administrators can access this page. Review registered users and remove accounts when needed.
-          </p>
-        </div>
+    <div className="mx-auto max-w-6xl">
+      <div className="flex flex-col gap-2">
+        <h1 className="font-display text-3xl font-bold text-ink">Admin Dashboard</h1>
+        <p className="text-sm text-ink/60">System-wide overview and management</p>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_320px]">
-        <section className="rounded-xl2 border border-ink/10 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <p className="text-sm font-semibold text-ink">Managed users</p>
-              <p className="mt-1 text-xs text-ink/50">{loading ? "Loading users..." : `${users.length} total user(s)`}</p>
-            </div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-ink/5 px-3 py-1 text-sm font-medium text-ink">
-              <Users size={16} /> Admin only
-            </div>
+      {/* Stat cards */}
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <StatCard 
+          label="Total Farms" 
+          value={users.length || 0}
+          icon={Building2}
+          color="#2F6B41"
+          status="ACTIVE"
+        />
+        <StatCard 
+          label="Farmers" 
+          value={farmerCount}
+          icon={Users}
+          color="#2F6B41"
+          status="ACTIVE"
+        />
+        <StatCard 
+          label="Technicians" 
+          value={technicianCount}
+          icon={Wrench}
+          color="#2F6B41"
+          status="ACTIVE"
+        />
+        <StatCard 
+          label="Agronomists" 
+          value={agronomistCount}
+          icon={Sprout}
+          color="#2F6B41"
+          status="ACTIVE"
+        />
+        <StatCard 
+          label="Total Sensors" 
+          value={dashboardData?.stats?.totalSensors || 0}
+          icon={TrendingUp}
+          color="#2F6B41"
+          status="MONITORED"
+        />
+      </div>
+
+      {/* More metrics */}
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard 
+          label="Active Sensors" 
+          value={dashboardData?.stats?.activeSensors || 0}
+          icon={TrendingUp}
+          color="#2F6B41"
+          status="ONLINE"
+        />
+        <StatCard 
+          label="Faulty Sensors" 
+          value={dashboardData?.stats?.faultySensors || 0}
+          icon={AlertTriangle}
+          color="#dc2626"
+          status="ALERT"
+        />
+        <StatCard 
+          label="Active Alerts" 
+          value={dashboardData?.stats?.alertCount || 0}
+          icon={AlertTriangle}
+          color="#f59e0b"
+          status="ALERT"
+        />
+      </div>
+
+      {/* Chart and Alerts */}
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        <div className="rounded-xl border border-ink/10 bg-white p-5 shadow-sm lg:col-span-1">
+          <p className="mb-4 font-display text-lg font-bold text-ink">Users by Role</p>
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={roleChartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#7a7a70" }} />
+                <YAxis tick={{ fontSize: 11, fill: "#7a7a70" }} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#2F6B41" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+        </div>
 
-          {error && (
-            <div className="mt-5 rounded-xl2 border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-              <AlertTriangle size={16} className="inline-block mr-2" /> {error}
-            </div>
-          )}
-
-          {actionMessage && (
-            <div className="mt-5 rounded-xl2 border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-              <CheckCircle2 size={16} className="inline-block mr-2" /> {actionMessage}
-            </div>
-          )}
-
-          <div className="mt-6 overflow-hidden rounded-xl2 border border-ink/10">
-            <div className="grid grid-cols-[1.8fr_1.2fr_1fr_96px] gap-4 bg-fg-cream px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink/60">
-              <span>Name</span>
-              <span>Email</span>
-              <span>Role</span>
-              <span className="text-right">Action</span>
-            </div>
-            <div className="divide-y divide-ink/10">
-              {loading ? (
-                <div className="p-6 text-sm text-ink/60">Loading user list...</div>
-              ) : users.length === 0 ? (
-                <div className="p-6 text-sm text-ink/60">No registered users found.</div>
-              ) : (
-                users.map((user) => (
-                  <div key={user.id} className="grid grid-cols-[1.8fr_1.2fr_1fr_96px] gap-4 px-5 py-4 text-sm text-ink">
-                    <div>
-                      <p className="font-medium text-ink">{user.name || 'Unnamed user'}</p>
-                      <p className="mt-1 text-xs text-ink/50">Joined {new Date(user.createdAt || user.created_at || Date.now()).toLocaleDateString()}</p>
-                    </div>
-                    <div className="break-words text-xs text-ink/70">{user.email}</div>
-                    <div className="text-sm font-semibold text-ink">{user.role}</div>
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteUser(user.id)}
-                        disabled={user.id === auth?.user?.id}
-                        className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                          user.id === auth?.user?.id
-                            ? 'cursor-not-allowed border-ink/10 bg-ink/5 text-ink/40'
-                            : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-100'
-                        }`}
-                      >
-                        <Trash2 size={16} />
-                        Delete
-                      </button>
-                    </div>
+        <div className="rounded-xl border border-ink/10 bg-white p-5 shadow-sm lg:col-span-2">
+          <p className="font-display text-lg font-bold text-ink">Recent Alerts</p>
+          <div className="mt-4 space-y-3">
+            {recentAlerts.map((alert) => (
+              <div key={alert.id} className="rounded-lg border border-ink/10 bg-ink/5 p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="font-semibold text-ink">{alert.title}</p>
+                    <p className="mt-1 text-xs text-ink/60">{alert.zone}</p>
                   </div>
-                ))
-              )}
-            </div>
+                  <span className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                    alert.severity === 'critical' 
+                      ? 'bg-red-100 text-red-700' 
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {alert.severity}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
-
-        <aside className="rounded-xl2 border border-ink/10 bg-white p-6 shadow-sm">
-          <p className="text-sm font-semibold text-ink">Admin controls</p>
-          <div className="mt-4 space-y-3 text-sm text-ink/70">
-            <p>
-              Use this panel only for account administration. Deleting a user permanently removes access for that email.
-            </p>
-            <p>
-              If this is your account, you cannot delete it from here. To remove your own account, use the profile delete action instead.
-            </p>
-          </div>
-        </aside>
+        </div>
       </div>
     </div>
   );
