@@ -50,12 +50,10 @@ export default function LoginPage() {
 
     try {
       const response = await authAPI.demoLogin(role);
-<<<<<<< HEAD
       if (!response?.success) {
         throw new Error(response?.message || "Demo login failed");
       }
-=======
->>>>>>> 3ec7600 (changes for all section in the app)
+
       setAuth(response.token, response.user);
       router.push("/dashboard");
     } catch (err) {
@@ -107,8 +105,6 @@ export default function LoginPage() {
                   <Logo variant="small" alt="FG" />
                 </div>
               </div>
-
-<<<<<<< HEAD
               {error && (
                 <div className="mb-4 rounded-3xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
                   {error}
@@ -205,28 +201,7 @@ export default function LoginPage() {
                 </Link>
               </div>
             </div>
-=======
-          <div className="space-y-3 mb-6">
-            <p className="text-sm text-cream/80">Or use a demo account for the selected role:</p>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin(selectedRole)}
-              disabled={loading}
-              className="w-full py-3 rounded-lg border border-white/10 bg-white/5 text-cream font-semibold transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loading ? "Signing in..." : `Use demo ${selectedRole} account`}
-            </button>
-          </div>
 
-          {/* Signup Link */}
-          <div className="border-t border-white/10 pt-6">
-            <p className="text-center text-sm">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-fg-green hover:text-fg-green/80 font-semibold transition">
-                Sign up
-              </Link>
-            </p>
->>>>>>> 86c0943 (Update root login demo flow and API client for multi-role demo login)
           </div>
         </div>
       </div>
