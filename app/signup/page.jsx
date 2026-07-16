@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import { authAPI } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { setAuth } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -53,8 +55,8 @@ export default function SignupPage() {
         role: formData.role
       });
 
-      // Store token and redirect
-      localStorage.setItem('token', response.token);
+      // Store auth state and redirect
+      setAuth(response.token, response.user);
       router.push('/dashboard');
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
